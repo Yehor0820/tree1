@@ -4,7 +4,7 @@
    LETTER - рядки листа (кожен елемент масиву = окремий абзац)
    ========================================================= */
 const START = "2025-02-14T00:00:00";
- 
+
 const LETTER = [
   "Для кохання мого життя:",
   "Якби можна було вибрати безпечне місце, воно було б поруч із тобою.",
@@ -12,20 +12,20 @@ const LETTER = [
   "— Я кохаю тебе!"
 ];
 /* ========================================================= */
- 
+
 const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
 const $ = id => document.getElementById(id);
 const sleep = ms => new Promise(r => setTimeout(r, ms));
- 
+
 /* таймлайн анімації, секунди */
 const TRUNK_END = 2.2;                       // стовбур росте 0 -> 2.2 c
 const BLOOM_START = 1.8, BLOOM_END = 6;      // крона розквітає
 const LETTER_START = 6.2;                    // тоді ж з'являється лист
- 
+
 const canvas = $("tree");
 const ctx = canvas.getContext("2d");
 let W = 0, H = 0;
- 
+
 /* ---------- розмір полотна ---------- */
 function resize() {
   const dpr = window.devicePixelRatio || 1;
@@ -37,7 +37,7 @@ function resize() {
 }
 addEventListener("resize", resize);
 resize();
- 
+
 /* геометрія дерева залежить від розміру екрана */
 function layout() {
   const u = Math.min(W * 0.55, H * 0.5);
@@ -49,11 +49,11 @@ function layout() {
     u
   };
 }
- 
+
 /* ---------- крона: точки всередині форми серця ---------- */
 const PALETTE = ["#b3001b", "#d6142b", "#e8394a", "#f06a78", "#f7a1ab", "#ffc2c9"];
 const hearts = [];
- 
+
 while (hearts.length < 420) {
   const x = Math.random() * 2.4 - 1.2;
   const y = Math.random() * 2.5 - 1.15;
@@ -68,7 +68,7 @@ while (hearts.length < 420) {
     });
   }
 }
- 
+
 /* маленьке серце: x - центр, y - верх, s - розмір */
 function heart(c, x, y, s, color) {
   c.fillStyle = color;
@@ -80,14 +80,14 @@ function heart(c, x, y, s, color) {
   c.bezierCurveTo(x + s * 0.5, y, x, y, x, y + s * 0.35);
   c.fill();
 }
- 
+
 const clamp = v => Math.max(0, Math.min(1, v));
 const easeOut = v => 1 - Math.pow(1 - v, 3);
- 
+
 /* ---------- пелюстки, що падають ---------- */
 const petals = [];
 let lastPetal = 0;
- 
+
 function spawnPetal(L, t) {
   const h = hearts[Math.floor(Math.random() * hearts.length)];
   const cyCanopy = L.ground - L.trunkH - L.k * 0.6;
@@ -104,23 +104,23 @@ function spawnPetal(L, t) {
     landedAt: null
   });
 }
- 
+
 /* ---------- малювання кадру ---------- */
 const t0 = performance.now();
 let prev = t0;
- 
+
 function frame(now) {
   const t = reduced ? 99 : (now - t0) / 1000;
   const dt = (now - prev) / 1000;
   prev = now;
   const L = layout();
- 
+
   ctx.clearRect(0, 0, W, H);
- 
+
   /* земля */
   ctx.fillStyle = "#3a2a20";
   ctx.fillRect(0, L.ground, W, 2);
- 
+
   /* стовбур: звужується догори */
   const grow = easeOut(clamp(t / TRUNK_END));
   const h = L.trunkH * grow;
@@ -133,7 +133,7 @@ function frame(now) {
   ctx.lineTo(L.cx - w1 / 2, L.ground - h);
   ctx.closePath();
   ctx.fill();
- 
+
   /* крона */
   const bloom = clamp((t - BLOOM_START) / (BLOOM_END - BLOOM_START));
   const cy = L.ground - L.trunkH - L.k * 0.6;
@@ -145,7 +145,7 @@ function frame(now) {
       heart(ctx, L.cx + p.x * L.k, cy - p.y * L.k - size / 2, size, p.color);
     }
   }
- 
+
   /* пелюстки з'являються, коли крона повністю розквітла */
   if (t > BLOOM_END && now - lastPetal > (reduced ? 1200 : 220)) {
     spawnPetal(L, t);
@@ -166,29 +166,29 @@ function frame(now) {
     heart(ctx, p.x0 + sway, p.y, p.size, p.color);
     ctx.globalAlpha = 1;
   }
- 
+
   requestAnimationFrame(frame);
 }
 requestAnimationFrame(frame);
- 
+
 /* ---------- лічильник ---------- */
 const pad = n => String(n).padStart(2, "0");
- 
+
 function tick() {
-  let ms = Math.max(0, Date.now() - new Date(START).getTime());
+  const ms = Math.max(0, Date.now() - new Date(START).getTime());
   const days = Math.floor(ms / 864e5);
   const hours = Math.floor(ms / 36e5) % 24;
   const mins = Math.floor(ms / 6e4) % 60;
   const secs = Math.floor(ms / 1e3) % 60;
   $("time").textContent = `${days} днів ${pad(hours)} годин ${pad(mins)} хвилин ${pad(secs)} секунд`;
 }
- 
+
 function startCounter() {
   $("counter").hidden = false;
   tick();
   setInterval(tick, 1000);
 }
- 
+
 /* ---------- лист, що друкується ---------- */
 async function typeLetter() {
   const box = $("letter");
@@ -203,6 +203,5 @@ async function typeLetter() {
     await sleep(reduced ? 0 : 400);
   }
 }
- 
+
 setTimeout(typeLetter, reduced ? 0 : LETTER_START * 1000);
- 
