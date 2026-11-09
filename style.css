@@ -1,0 +1,54 @@
+* { box-sizing: border-box; margin: 0; }
+html, body { height: 100%; }
+ 
+body {
+  background: #f6e7da;
+  color: #5b4636;
+  font-family: "Caveat", "Segoe Print", "Comic Sans MS", cursive;
+  overflow: hidden;
+}
+ 
+[hidden] { display: none !important; }
+ 
+.scene { position: fixed; inset: 0; }
+ 
+canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+ 
+/* лист, який "друкується" */
+.letter {
+  position: absolute;
+  left: 6vw;
+  top: 8vh;
+  width: min(46vw, 380px);
+  font-size: clamp(1.3rem, 4.6vw, 1.9rem);
+  line-height: 1.2;
+}
+.letter p { margin-bottom: .9em; }
+ 
+/* лічильник внизу */
+.counter {
+  position: absolute;
+  left: 6vw;
+  bottom: 10vh;
+  max-width: 88vw;
+  font-size: clamp(1.2rem, 4vw, 1.6rem);
+  animation: fadein 1.2s both;
+}
+.counter span { display: block; opacity: .8; }
+.counter b {
+  display: block;
+  font-size: clamp(1.4rem, 5.2vw, 2rem);
+  color: #b3001b;
+  font-weight: 700;
+}
+@keyframes fadein { from { opacity: 0; } }
+ 
+@media (prefers-reduced-motion: reduce) {
+  .counter { animation: none; }
+}
+ 
