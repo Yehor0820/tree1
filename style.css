@@ -25,7 +25,7 @@ canvas {
   left: 6vw;
   top: 8vh;
   width: min(46vw, 380px);
-  font-size: clamp(1.3rem, 4.6vw, 1.9rem);
+  font-size: clamp(1.1rem, 3.8vw, 1.6rem);
   line-height: 1.2;
 }
 .letter p { margin-bottom: .9em; }
